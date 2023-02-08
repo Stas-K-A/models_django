@@ -1,0 +1,52 @@
+from news_make.models import *
+
+u1 = User.objects.create_user('Stas')
+u2 = User.objects.create_user('Alex')
+
+author_1 = Author.objects.create(authorUser = u1)
+author_2 = Author.objects.create(authorUser = u2)
+
+Category.objects.create(name = 'Economy')
+Category.objects.create(name = 'Culture')
+Category.objects.create(name = 'Sport')
+Category.objects.create(name = 'Russia')
+
+Post.objects.create(author = author_1, categoryType = 'AR', title = "Economist predicted Russia’s budget deficit of up to 5 trillion rubles", text = "The Russian economy in 2023 will face a budget deficit that could reach 4-5 trillion rubles, although the planned deficit is 3 trillion rubles, economist Yevgeny Kogan believes. He explained to RIAMO that this would not create big problems for the country due to the budget rule, which helps to stabilize the exchange rate. When there is a shortage of money in the budget, the state sells, for example, yuan from the National Wealth Fund and compensates for the lack of revenue, Kogan recalled. ... How tragic is that? No, this is not tragic, given that we have the National Wealth Fund, there is a budget rule that allows you to stabilize the exchange rate, the economist said. Kogan emphasized that the measures taken in Russia would not allow a strong depreciation of the ruble. The national currency, he said, will strengthen, which will be an unpleasant moment for Russian exporters. For them, the exchange rate of 80 rubles per dollar is more profitable, the expert said. The Ministry of Finance previously announced that the federal budget deficit in January 2023, according to preliminary estimates, will amount to 1.76 trillion rubles. A year earlier, there was a budget surplus of 125 billion rubles. The January record deficit was the result of a 35% year-on-year reduction in revenues, to 1.36 trillion rubles, and an increase in spending by 58.7%, to 3.12 trillion rubles, the ministry noted.")
+Post.objects.create(author = author_2, categoryType = 'AR', title = "The lawyer told what articles of the Criminal Code of the Russian Federation can threaten for contractual matches", text = "Lawyer Alexander Khaminsky explained to NEWS.ru that the qualification of the actions of match-fixing participants as a criminal offense depends primarily on the harm and damage caused, the qualification of the acts of the perpetrators and the offenses in the Criminal Code. According to him, quite often we are talking about commercial bribery or fraud, but it is possible that a new offense should be introduced into the Criminal Code. If we talk about the existing compositions of the Criminal Code of the Russian Federation, we can note Art. 204 'Commercial bribery' in the event that it will be about receiving money by an official. In other cases, of course, it is necessary to introduce a new corpus delicti. This is likely to be a continuation of articles 200.1-200.7 of the Criminal Code of the Russian Federation, which provide, among other things, for the receipt of illegal remuneration by persons who are not officials. Well, as for fraud on the sweepstakes, article 159 of the Criminal Code 'Fraud' loved by many judges and investigators has not yet been repealed, Khaminsky emphasized.")
+Post.objects.create(author = author_1, categoryType = 'NW', title = "Controllers distribute carrots to stowaways in Kazan", text = "In Kazan, the inspectors of the city carrier went on a raid with carrots to identify free riders in public transport. The inspectors gave each ‘hare’ a carrot and offered to pay for the fare. Carrots were handed out to stowaways, and then they were offered to pay the fare or leave the rolling stock. Undoubtedly, the stowaways were surprised by the attention. Some began to eat carrots right in the transport. Fortunately, it was washed, cleaned and packed,  the press service of the Kazan carrier reports.") 
+
+Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1))
+Post.objects.get(id=1).postCategory.add(Category.objects.get(id=4))
+Post.objects.get(id=2).postCategory.add(Category.objects.get(id=3))
+Post.objects.get(id=3).postCategory.add(Category.objects.get(id=4))
+
+Comment.objects.create(commentPost = Post.objects.get(id = 1), commentUser = Author.objects.get(id = 1).authorUser, text = "Not good news :(")
+Comment.objects.create(commentPost = Post.objects.get(id = 2), commentUser = Author.objects.get(id = 2).authorUser, text = "Amazing :)")
+Comment.objects.create(commentPost = Post.objects.get(id = 2), commentUser = Author.objects.get(id = 1).authorUser, text = "Nice!")
+
+Post.objects.get(id = 1).dislike()
+Post.objects.get(id = 2).dislike()
+Post.objects.get(id = 2).like()
+Post.objects.get(id = 3).like()
+Post.objects.get(id = 3).like()
+Post.objects.get(id = 3).like()
+
+Comment.objects.get(id = 2).like()
+Comment.objects.get(id = 2).like()
+Comment.objects.get(id = 2).like()
+Comment.objects.get(id = 3).like()
+Comment.objects.get(id = 4).like()
+Comment.objects.get(id = 4).like()
+Comment.objects.get(id = 4).like()
+Comment.objects.get(id = 4).like()
+
+author_1.update_rating()
+author_2.update_rating()
+
+Author.objects.order_by('-ratingAuthor').values('authorUser__username', 'ratingAuthor')[0]
+
+Post.objects.order_by('-rating').values('dateCreation', 'author__authorUser__username', 'rating', 'title')[0]
+Post.objects.order_by('-rating')[0].preview()
+
+Post.objects.order_by('-rating')[0].comment_set.all().values('dateCreation', 'commentUser__username', 'rating', 'text')
+
